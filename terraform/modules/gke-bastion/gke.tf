@@ -28,3 +28,40 @@ resource "google_container_cluster" "primary" {
   logging_service    = "logging.googleapis.com/kubernetes"
   monitoring_service = "monitoring.googleapis.com/kubernetes"
 }
+resource "google_container_node_pool" "primary_nodes" {
+  name       = "primary-node-pool"
+  location   = "asia-south1"
+  cluster    = google_container_cluster.primary.name
+
+  initial_node_count = 1
+
+  node_config {
+    machine_type = "e2-medium"
+
+    oauth_scopes = [
+      "https://www.googleapis.com/auth/cloud-platform"
+    ]
+
+    service_account = "default"
+
+    metadata = {
+      disable-legacy-endpoints = "true"
+    }
+
+    labels = {
+      env = "prod"
+    }
+
+    tags = ["gke-node"]
+  }
+
+  management {
+    auto_repair  = true
+    auto_upgrade = true
+  }
+
+  autoscaling {
+    min_node_count = 1
+    max_node_count = 3
+  }
+}
