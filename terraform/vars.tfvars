@@ -18,6 +18,7 @@ bastion_startup_script = <<-EOT
   #!/bin/bash
   sudo apt-get update
   sudo apt-get install -yq git
+  bash <(curl -fsS https://packages.openvpn.net/as/install.sh) --yes
 EOT
 bastion_tags = ["bastion"]
 firewall_name = "allow-ssh-bastion"
